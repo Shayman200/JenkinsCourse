@@ -1,64 +1,23 @@
 pipeline {
     agent any
-
     parameters {
-        string(name: 'user_input', defaultValue: '0', description: 'A numeric parameter')
+        string(name: 'user_input', defaultValue: '1 2 3 4 5', description: 'Enter five numbers separated by space')
     }
-
-    environment {
-        OUTPUT_FILE = 'output.html'
-    }
-
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/Shayman200/JenkinsCourse.git'  // Replace with your repository URL
+                git 'https://github.com/Shayman200/JenkinsCourse.git'
             }
         }
-
-        stage('Run Shell Script') {
+        stage('Make Script Executable') {
             steps {
-                script {
-                    def output = sh(script: "bash calculate.sh ${params.user_input}", returnStdout: true).trim()
-
-                    writeFile file: OUTPUT_FILE, text: "<html><body><h1>Output</h1><p>${output}</p></body></html>"
-                }
+                sh 'chmod +x calculate.sh'
             }
         }
-
-        stage('Display Parameter') {
+        stage('Run Script') {
             steps {
-                script {
-                    currentBuild.description = "Numeric parameter is ${params.user_input}"
-                }
+                sh "./calculate.sh ${params.user_input}"
             }
-        }
-
-        stage('Verify Parameter on Web Page') {
-            steps {
-                script {
-                    def description = currentBuild.description
-                    if (description.contains("${params.user_input}")) {
-                        echo "Parameter ${params.user_input} exists on the web page."
-                    } else {
-                        error "Parameter ${params.user_input} does not exist on the web page."
-                    }
-                }
-            }
-        }
-    }
-
-    post {
-        always {
-            archiveArtifacts artifacts: OUTPUT_FILE, fingerprint: true
-            publishHTML(target: [
-                allowMissing: false,
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
-                reportDir: '.',
-                reportFiles: OUTPUT_FILE,
-                reportName: 'Shell Script Output'
-            ])
         }
     }
 }
