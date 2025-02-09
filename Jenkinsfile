@@ -12,14 +12,15 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/szeevi/fibvar.git'  // Replace with your repository URL
+                git 'https://github.com/Shayman200/JenkinsCourse.git'  // Replace with your repository URL
             }
         }
 
         stage('Run Shell Script') {
             steps {
                 script {
-                    def output = sh(script: "bash fibvar.sh ${params.user_input}", returnStdout: true).trim()
+                    def output = sh(script: "bash calculate.sh ${params.user_input}", returnStdout: true).trim()
+
                     writeFile file: OUTPUT_FILE, text: "<html><body><h1>Output</h1><p>${output}</p></body></html>"
                 }
             }
