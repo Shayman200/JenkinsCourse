@@ -4,11 +4,7 @@ pipeline {
     parameters {
         string(name: 'user_input', defaultValue: '0', description: 'A numeric parameter')
     }
-stage('Checkout Latest Code') {
-    steps {
-        checkout scm
-    }
-}
+
     environment {
         OUTPUT_FILE = 'output.html'
     }
